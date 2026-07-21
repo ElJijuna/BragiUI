@@ -1,0 +1,15 @@
+name: Web Audit Report
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *' # ⏰ Ejecuta todos los días a las 6:00 AM UTC
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ElJijuna/web-audit-action@v2.2.0
+        with:
+          runtime: npm
+          token: ${{ secrets.REPORTS_AUTOMATED }}
+          db_repo: ReportsAutomated
+
