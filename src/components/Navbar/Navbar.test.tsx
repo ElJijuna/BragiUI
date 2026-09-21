@@ -12,6 +12,7 @@ describe('Navbar', () => {
     render(<Navbar brand="BragiUI" sidebarSections={sections} />);
     const sidebar = screen.getByRole('complementary', { name: 'Menú lateral' });
     expect(sidebar).toHaveAttribute('data-collapsed', 'false');
+    expect(sidebar.style.transition).toContain('width');
     expect(screen.getByRole('heading', { name: 'Principal' })).toBeInTheDocument();
 
     const toggle = screen.getByRole('button', { name: 'Contraer menú lateral' });
@@ -43,5 +44,20 @@ describe('Navbar', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Contraer menú lateral' }));
     expect(onCollapsedChange).toHaveBeenCalledWith(true);
     expect(screen.getByRole('complementary', { name: 'Menú lateral' })).toHaveAttribute('data-collapsed', 'false');
+  });
+
+  it('disables transitions when reduced motion is requested', () => {
+    const previous = window.matchMedia;
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: () => ({ matches: true, addEventListener: () => {}, removeEventListener: () => {} }),
+    });
+    try {
+      render(<Navbar brand="BragiUI" sidebarSections={sections} />);
+      expect(screen.getByRole('complementary', { name: 'Menú lateral' }).style.transition).toBe('none');
+      expect(screen.getByRole('link', { name: 'Inicio' }).style.transition).toBe('none');
+    } finally {
+      Object.defineProperty(window, 'matchMedia', { configurable: true, value: previous });
+    }
   });
 });
