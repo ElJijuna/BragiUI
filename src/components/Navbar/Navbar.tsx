@@ -131,8 +131,8 @@ export function Navbar({
   };
 
   return (
-    <div className={className} style={{ color: 'var(--bragi-foreground, #111827)', fontFamily: 'var(--bragi-font-family, inherit)', ...style }}>
-      <header style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--bragi-nav-gap, 12px)', minHeight: 'var(--bragi-navbar-height, 64px)', padding: '8px var(--bragi-nav-padding, 16px)', borderBottom: '1px solid var(--bragi-border, #d1d5db)', background: 'var(--bragi-nav-background, #fff)', boxSizing: 'border-box' }}>
+    <div className={className} style={{ display: 'flex', flexDirection: 'column', minHeight: 'var(--bragi-layout-min-height, 100dvh)', color: 'var(--bragi-foreground, #111827)', fontFamily: 'var(--bragi-font-family, inherit)', ...style }}>
+      <header style={{ display: 'flex', flex: '0 0 auto', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--bragi-nav-gap, 12px)', minHeight: 'var(--bragi-navbar-height, 64px)', padding: '8px var(--bragi-nav-padding, 16px)', borderBottom: '1px solid var(--bragi-border, #d1d5db)', background: 'var(--bragi-nav-background, #fff)', boxSizing: 'border-box' }}>
         <button type="button" aria-label={isCollapsed ? 'Expandir menú lateral' : 'Contraer menú lateral'} aria-expanded={!isCollapsed} aria-controls={sidebarId} onClick={() => changeCollapsed(!isCollapsed)} style={iconButtonStyle}>
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
         </button>
@@ -144,7 +144,7 @@ export function Navbar({
         </form>}
         {topRightItems.length > 0 && <nav aria-label="Navegación secundaria" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4, marginLeft: 'auto' }}>{topRightItems.map(item => <MenuItem key={item.id} item={item} reducedMotion={reducedMotion} />)}</nav>}
       </header>
-      <div style={{ display: 'flex', alignItems: 'stretch', minWidth: 0 }}>
+      <div style={{ display: 'flex', flex: '1 1 auto', alignItems: 'stretch', minWidth: 0 }}>
         <aside id={sidebarId} aria-label={sidebarLabel} data-collapsed={isCollapsed} style={{ flex: '0 0 auto', width: isCollapsed ? 'var(--bragi-sidebar-collapsed-width, 64px)' : 'var(--bragi-sidebar-width, 240px)', padding: '12px 8px', borderRight: '1px solid var(--bragi-border, #d1d5db)', background: 'var(--bragi-sidebar-background, #f3f4f6)', boxSizing: 'border-box', transition: reducedMotion ? 'none' : 'width var(--bragi-motion-duration, 220ms) ease' }}>
           <nav aria-label={sidebarLabel}>
             {sidebarSections.map((section, index) => (

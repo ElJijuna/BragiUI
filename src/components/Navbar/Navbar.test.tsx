@@ -46,6 +46,16 @@ describe('Navbar', () => {
     expect(screen.getByRole('complementary', { name: 'Menú lateral' })).toHaveAttribute('data-collapsed', 'false');
   });
 
+  it('fills the viewport below the top bar by default', () => {
+    const { container } = render(<Navbar brand="BragiUI" />);
+    const layout = container.firstElementChild as HTMLElement;
+    const sidebar = screen.getByRole('complementary', { name: 'Menú lateral' });
+
+    expect(layout.style.minHeight).toContain('100dvh');
+    expect(layout.style.flexDirection).toBe('column');
+    expect(sidebar.parentElement).toHaveStyle({ flex: '1 1 auto' });
+  });
+
   it('disables transitions when reduced motion is requested', () => {
     const previous = window.matchMedia;
     Object.defineProperty(window, 'matchMedia', {
