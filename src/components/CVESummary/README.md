@@ -7,7 +7,7 @@
 La aplicación obtiene los datos y entrega el resultado al componente:
 
 ```tsx
-import { CVESummary, type CVEData } from 'bragiui';
+import { CVESummary, type CVEData } from '@pilmee/bragiui';
 
 function CveView({ data, isLoading, error }: {
   data: CVEData | null;
