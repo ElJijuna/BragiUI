@@ -51,7 +51,8 @@ const iconButtonStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
-function MenuItem({ item, iconOnly = false }: { item: NavbarItem; iconOnly?: boolean }) {
+function MenuItem({ item, iconOnly = false, inSidebar = false }: { item: NavbarItem; iconOnly?: boolean; inSidebar?: boolean }) {
+  const integrated = item.active && inSidebar;
   const content = (
     <>
       {item.icon && <span aria-hidden="true" style={{ display: 'inline-flex', flexShrink: 0 }}>{item.icon}</span>}
@@ -66,9 +67,13 @@ function MenuItem({ item, iconOnly = false }: { item: NavbarItem; iconOnly?: boo
     minHeight: 40,
     minWidth: iconOnly ? 40 : undefined,
     padding: iconOnly ? 8 : '8px 12px',
-    borderRadius: 'var(--bragi-radius-sm, 6px)',
+    borderRadius: integrated ? 'var(--bragi-radius-sm, 6px) 0 0 var(--bragi-radius-sm, 6px)' : 'var(--bragi-radius-sm, 6px)',
     color: item.active ? 'var(--bragi-nav-active-foreground, #1d4ed8)' : 'var(--bragi-foreground, #111827)',
-    background: item.active ? 'var(--bragi-nav-active-background, #eff6ff)' : 'transparent',
+    background: integrated ? 'var(--bragi-workspace-background, #fff)' : item.active ? 'var(--bragi-nav-active-background, #eff6ff)' : 'transparent',
+    marginRight: integrated ? -9 : undefined,
+    position: integrated ? 'relative' : undefined,
+    zIndex: integrated ? 1 : undefined,
+    boxShadow: integrated ? '1px 0 0 var(--bragi-workspace-background, #fff)' : undefined,
     textDecoration: 'none',
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
@@ -122,17 +127,17 @@ export function Navbar({
         {topRightItems.length > 0 && <nav aria-label="Navegación secundaria" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4, marginLeft: 'auto' }}>{topRightItems.map(item => <MenuItem key={item.id} item={item} />)}</nav>}
       </header>
       <div style={{ display: 'flex', alignItems: 'stretch', minWidth: 0 }}>
-        <aside id={sidebarId} aria-label={sidebarLabel} data-collapsed={isCollapsed} style={{ flex: '0 0 auto', width: isCollapsed ? 'var(--bragi-sidebar-collapsed-width, 64px)' : 'var(--bragi-sidebar-width, 240px)', padding: '12px 8px', borderRight: '1px solid var(--bragi-border, #d1d5db)', background: 'var(--bragi-sidebar-background, #fff)', boxSizing: 'border-box' }}>
+        <aside id={sidebarId} aria-label={sidebarLabel} data-collapsed={isCollapsed} style={{ flex: '0 0 auto', width: isCollapsed ? 'var(--bragi-sidebar-collapsed-width, 64px)' : 'var(--bragi-sidebar-width, 240px)', padding: '12px 8px', borderRight: '1px solid var(--bragi-border, #d1d5db)', background: 'var(--bragi-sidebar-background, #f3f4f6)', boxSizing: 'border-box' }}>
           <nav aria-label={sidebarLabel}>
             {sidebarSections.map((section, index) => (
               <section key={section.id} aria-label={section.label} style={{ borderTop: index ? '1px solid var(--bragi-border, #d1d5db)' : undefined, paddingTop: index ? 12 : 0, marginTop: index ? 12 : 0 }}>
                 {!isCollapsed && <h2 style={{ margin: '8px 12px', color: 'var(--bragi-muted, #6b7280)', fontSize: 'var(--bragi-sidebar-heading-size, 12px)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{section.label}</h2>}
-                <div style={{ display: 'grid', gap: 4 }}>{section.items.map(item => <MenuItem key={item.id} item={item} iconOnly={isCollapsed} />)}</div>
+                <div style={{ display: 'grid', gap: 4 }}>{section.items.map(item => <MenuItem key={item.id} item={item} iconOnly={isCollapsed} inSidebar />)}</div>
               </section>
             ))}
           </nav>
         </aside>
-        {children !== undefined && <main style={{ flex: '1 1 0', minWidth: 0 }}>{children}</main>}
+        <main style={{ flex: '1 1 0', minWidth: 0, background: 'var(--bragi-workspace-background, #fff)' }}>{children}</main>
       </div>
     </div>
   );
