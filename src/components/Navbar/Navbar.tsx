@@ -68,10 +68,21 @@ function useReducedMotion() {
 
 function MenuItem({ item, iconOnly = false, inSidebar = false, reducedMotion = false }: { item: NavbarItem; iconOnly?: boolean; inSidebar?: boolean; reducedMotion?: boolean }) {
   const integrated = item.active && inSidebar;
+  const outerCorner = (side: 'top' | 'bottom') => (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      style={{ position: 'absolute', right: -1, [side]: -16, width: 16, height: 16, pointerEvents: 'none' }}
+    >
+      <path d={side === 'top' ? 'M16 0 V16 H0 A16 16 0 0 0 16 0 Z' : 'M16 16 V0 H0 A16 16 0 0 1 16 16 Z'} fill="var(--bragi-workspace-background, #fff)" />
+    </svg>
+  );
   const content = (
     <>
+      {integrated && outerCorner('top')}
       {item.icon && <span aria-hidden="true" style={{ display: 'inline-flex', flexShrink: 0 }}>{item.icon}</span>}
       <span aria-hidden={iconOnly || undefined} style={{ display: 'inline-block', overflow: 'hidden', maxWidth: iconOnly ? 0 : 180, opacity: iconOnly ? 0 : 1, whiteSpace: 'nowrap', transition: reducedMotion ? 'none' : 'max-width var(--bragi-motion-duration, 220ms) ease, opacity var(--bragi-motion-fast, 160ms) ease' }}>{item.label}</span>
+      {integrated && outerCorner('bottom')}
     </>
   );
   const commonStyle: React.CSSProperties = {
@@ -82,7 +93,7 @@ function MenuItem({ item, iconOnly = false, inSidebar = false, reducedMotion = f
     minHeight: 40,
     minWidth: iconOnly ? 40 : undefined,
     padding: '8px 12px',
-    borderRadius: integrated ? 'var(--bragi-radius-sm, 6px) 0 0 var(--bragi-radius-sm, 6px)' : 'var(--bragi-radius-sm, 6px)',
+    borderRadius: integrated ? 'var(--bragi-sidebar-active-radius, 8px) 0 0 var(--bragi-sidebar-active-radius, 8px)' : 'var(--bragi-radius-sm, 6px)',
     color: item.active ? 'var(--bragi-nav-active-foreground, #1d4ed8)' : 'var(--bragi-foreground, #111827)',
     background: integrated ? 'var(--bragi-workspace-background, #fff)' : item.active ? 'var(--bragi-nav-active-background, #eff6ff)' : 'transparent',
     marginRight: integrated ? -9 : undefined,
@@ -92,7 +103,7 @@ function MenuItem({ item, iconOnly = false, inSidebar = false, reducedMotion = f
     textDecoration: 'none',
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    overflow: 'hidden',
+    overflow: integrated ? 'visible' : 'hidden',
     transition: reducedMotion ? 'none' : 'background-color var(--bragi-motion-fast, 160ms) ease, color var(--bragi-motion-fast, 160ms) ease, gap var(--bragi-motion-duration, 220ms) ease',
   };
   const accessibleName = iconOnly ? item.label : undefined;
