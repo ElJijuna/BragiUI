@@ -3,3 +3,5 @@ export { ColorSchemeToggle } from './components/ColorSchemeToggle/ColorSchemeTog
 export { Welcome } from './components/Welcome/Welcome';
 export { CVESummary } from './components/CVESummary/CVESummary';
 export type { CVEData, CVESummaryProps } from './components/CVESummary/domain/types';
+export { Navbar } from './components/Navbar/Navbar';
+export type { NavbarItem, NavbarSection, NavbarSearch, NavbarProps } from './components/Navbar/Navbar';

@@ -13,6 +13,7 @@ export default defineConfig({
         Welcome: source('./src/components/Welcome/Welcome.tsx'),
         ColorSchemeToggle: source('./src/components/ColorSchemeToggle/ColorSchemeToggle.tsx'),
         CVESummary: source('./src/components/CVESummary/CVESummary.tsx'),
+        Navbar: source('./src/components/Navbar/Navbar.tsx'),
       },
       formats: ['es'],
     },

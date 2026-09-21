@@ -15,7 +15,8 @@
     },
     "./welcome": { "types": "./dist/components/Welcome/Welcome.d.ts", "default": "./dist/Welcome.js" },
     "./color-scheme-toggle": { "types": "./dist/components/ColorSchemeToggle/ColorSchemeToggle.d.ts", "default": "./dist/ColorSchemeToggle.js" },
-    "./cve-summary": { "types": "./dist/components/CVESummary/CVESummary.d.ts", "default": "./dist/CVESummary.js" }
+    "./cve-summary": { "types": "./dist/components/CVESummary/CVESummary.d.ts", "default": "./dist/CVESummary.js" },
+    "./navbar": { "types": "./dist/components/Navbar/Navbar.d.ts", "default": "./dist/Navbar.js" }
   },
   "sideEffects": false,
   "scripts": {

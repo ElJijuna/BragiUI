@@ -19,6 +19,33 @@ function Vista({ data }: { data: CVEData }) {
 }
 ```
 
+## Navbar
+
+`Navbar` recibe el contenido de la barra y las secciones del menú lateral. El lateral inicia expandido y el botón hamburguesa alterna entre expandido y compacto, mostrando solo iconos en este último estado. Los enlaces usan `href` y las acciones usan `onSelect`, así que puedes conectarlos al router de tu aplicación.
+
+```tsx
+import { Navbar } from 'bragiui/navbar'
+
+<Navbar
+  brand={<a href="/">Mi aplicación</a>}
+  topLeftItems={[{ id: 'projects', label: 'Proyectos', href: '/projects' }]}
+  topRightItems={[{ id: 'profile', label: 'Perfil', href: '/profile' }]}
+  search={{ placeholder: 'Buscar', onSubmit: query => console.log(query) }}
+  sidebarSections={[
+    { id: 'general', label: 'General', items: [
+      { id: 'home', label: 'Inicio', href: '/', icon: '⌂' },
+    ] },
+    { id: 'admin', label: 'Administración', items: [
+      { id: 'settings', label: 'Ajustes', href: '/settings', icon: '⚙' },
+    ] },
+  ]}
+>
+  <div>Contenido de la página</div>
+</Navbar>
+```
+
+El estado también puede ser controlado desde la aplicación mediante `collapsed`/`onCollapsedChange`; `defaultCollapsed` cambia el estado inicial. Los tokens de diseño del componente son `--bragi-nav-background`, `--bragi-sidebar-background`, `--bragi-nav-active-background`, `--bragi-nav-active-foreground`, `--bragi-foreground`, `--bragi-border`, `--bragi-surface`, `--bragi-muted`, `--bragi-font-family`, `--bragi-navbar-height`, `--bragi-sidebar-width`, `--bragi-sidebar-collapsed-width`, `--bragi-nav-gap`, `--bragi-nav-padding` y `--bragi-radius-sm`.
+
 También puedes importar desde `bragiui`. El paquete publica módulos ESM separados y marca sus módulos como libres de efectos secundarios para que el bundler elimine componentes sin uso. React y React DOM son dependencias `peer`.
 
 ## Tokens y estilos
