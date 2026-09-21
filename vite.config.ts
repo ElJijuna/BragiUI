@@ -1,35 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import { fileURLToPath } from 'node:url'
 
-// https://vitejs.dev/config/
+const source = (file: string) => fileURLToPath(new URL(file, import.meta.url))
+
 export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'BragiUI',
-      formats: ['es', 'umd']
+      entry: {
+        index: source('./src/index.ts'),
+        Welcome: source('./src/components/Welcome/Welcome.tsx'),
+        ColorSchemeToggle: source('./src/components/ColorSchemeToggle/ColorSchemeToggle.tsx'),
+        CVESummary: source('./src/components/CVESummary/CVESummary.tsx'),
+      },
+      formats: ['es'],
     },
-    rollupOptions: {
-      external: ['react', 'react-dom'],
-      output: [
-        {
-          format: 'es',
-          entryFileNames: 'index.es.js',
-          dir: 'dist'
-        },
-        {
-          format: 'umd',
-          entryFileNames: 'index.js',
-          dir: 'dist',
-          name: 'BragiUI',
-          globals: {
-            react: 'React',
-            'react-dom': 'ReactDOM'
-          }
-        }
-      ]
-    }
+    rolldownOptions: {
+      external: [/^react(?:\/.*)?$/, /^react-dom(?:\/.*)?$/],
+    },
   }
 })

@@ -3,20 +3,26 @@ import React from 'react';
 interface WelcomeProps {
   title?: string;
   message?: string;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export const Welcome: React.FC<WelcomeProps> = ({
   title = 'Welcome to BragiUI',
   message = 'A modern React component library',
+  className,
+  style,
 }) => {
   return (
     <div
+      className={className}
       style={{
-        padding: '32px',
+        padding: 'var(--bragi-space-lg, 32px)',
         textAlign: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        borderRadius: '8px',
-        color: 'white',
+        background: 'var(--bragi-welcome-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%))',
+        borderRadius: 'var(--bragi-radius-lg, 8px)',
+        color: 'var(--bragi-welcome-foreground, white)',
+        ...style,
       }}
       data-testid="welcome-component"
     >

@@ -1,381 +1,165 @@
 import React from 'react';
-import { Empty, Alert, Card, Tag, Divider, Space, Row, Col, Typography, Button } from 'antd';
-import { FiExternalLink } from 'react-icons/fi';
-import { CVESummaryProps } from './domain/types';
-import { useCVEData } from './hooks/useCVEData';
+import type { CVESummaryProps } from './domain/types';
 import { CVESummarySkeleton } from './components/Skeleton';
 
-const { Title, Text, Paragraph } = Typography;
+const sectionStyle: React.CSSProperties = {
+  marginTop: '24px',
+  paddingTop: '16px',
+  borderTop: '1px solid var(--bragi-border, #e5e7eb)',
+};
 
-/**
- * Obtiene el color del tag de severidad CVSS
- */
+const panelStyle: React.CSSProperties = {
+  padding: '16px',
+  background: 'var(--bragi-surface, #f9fafb)',
+  border: '1px solid var(--bragi-border, #e5e7eb)',
+  borderRadius: '6px',
+};
+
 const getSeverityColor = (severity?: string): string => {
   switch (severity) {
     case 'CRITICAL':
-      return 'red';
+      return 'var(--bragi-critical, #dc2626)';
     case 'HIGH':
-      return 'orange';
+      return 'var(--bragi-high, #ea580c)';
     case 'MEDIUM':
-      return 'gold';
+      return 'var(--bragi-medium, #ca8a04)';
     case 'LOW':
-      return 'green';
+      return 'var(--bragi-low, #16a34a)';
     case 'INFO':
     case 'NONE':
-      return 'blue';
+      return 'var(--bragi-info, #2563eb)';
     default:
-      return 'default';
+      return 'var(--bragi-muted, #6b7280)';
   }
 };
 
-/**
- * CVESummary Component
- *
- * Componente para mostrar información detallada de vulnerabilidades CVE.
- * Utiliza Ant Design 6.1.0 para una interfaz moderna y responsive.
- *
- * @param cve - CVE ID (ej: CVE-2025-36000)
- * @returns React component
- */
-export const CVESummary: React.FC<CVESummaryProps> = ({ cve }) => {
-  const { data, isPending, error } = useCVEData(cve);
-
-  // Empty state
-  if (!cve) {
+export const CVESummary: React.FC<CVESummaryProps> = ({ data, loading = false, error, className, style }) => {
+  if (error) {
     return (
-      <Empty
-        description="Por favor proporciona un CVE ID"
-        style={{ padding: '40px 0' }}
-        data-testid="cve-summary-empty"
-      />
+      <div role="alert" data-testid="cve-summary-error" style={{ padding: '16px', color: 'var(--bragi-error-foreground, #991b1b)', background: 'var(--bragi-error-background, #fef2f2)', border: '1px solid var(--bragi-error-border, #fecaca)', borderRadius: '6px' }}>
+        <strong>Error al cargar el CVE</strong>
+        <p>{error.message}</p>
+      </div>
     );
   }
 
-  // Loading state
-  if (isPending) {
+  if (loading) {
     return <CVESummarySkeleton />;
   }
 
-  // Error state
-  if (error) {
-    return (
-      <Alert
-        message="Error al cargar el CVE"
-        description={error instanceof Error ? error.message : 'Error desconocido'}
-        type="error"
-        showIcon
-        closable
-        data-testid="cve-summary-error"
-      />
-    );
-  }
-
-  // No data state
   if (!data || !data.cveMetadata) {
     return (
-      <Empty
-        description="No hay datos disponibles"
-        style={{ padding: '40px 0' }}
-        data-testid="cve-summary-no-data"
-      />
+      <div data-testid="cve-summary-empty" style={{ padding: '40px 0', textAlign: 'center', color: 'var(--bragi-muted, #6b7280)' }}>
+        No hay datos disponibles
+      </div>
     );
   }
 
-  const cveMetadata = data.cveMetadata;
-  const cnaContainer = data.containers.cna;
-  const adpContainer = Array.isArray(data.containers.adp) ? data.containers.adp[0] : data.containers.adp;
-
-  // Get description (usa descriptions array)
-  const description = cnaContainer?.descriptions?.[0]?.value || cnaContainer?.description;
-
-  // Get CVSS score - puede estar en cna.metrics o adp.metrics
+  const { cveMetadata, containers } = data;
+  const cnaContainer = containers.cna;
+  const adpContainer = containers.adp?.[0];
+  const description = cnaContainer?.descriptions?.[0]?.value;
   const cnaMetric = cnaContainer?.metrics?.[0]?.cvssV3_1;
   const adpMetric = adpContainer?.metrics?.[0]?.cvssV3_1;
-  
-  const cvssScore = cnaMetric?.baseScore || adpMetric?.baseScore;
-  const cvssSeverity = cnaMetric?.baseSeverity || adpMetric?.baseSeverity;
   const cvssMetric = cnaMetric || adpMetric;
+  const cvssScore = cvssMetric?.baseScore;
+  const cvssSeverity = cvssMetric?.baseSeverity;
+  const severityColor = getSeverityColor(cvssSeverity);
 
   return (
-    <Card
-      data-testid="cve-summary-container"
-      style={{ width: '100%' }}
-      className="cve-summary-card"
-    >
-      {/* CVE ID Header */}
-      <Row gutter={[16, 16]} align="middle">
-        <Col flex="auto">
-          <Title level={2} style={{ margin: 0 }}>
-            {cveMetadata.cveId}
-          </Title>
-        </Col>
-        {cvssSeverity && (
-          <Col>
-            <Tag color={getSeverityColor(cvssSeverity)} style={{ fontSize: '12px', padding: '4px 8px' }}>
-              {cvssSeverity}
-            </Tag>
-          </Col>
-        )}
-      </Row>
+    <article data-testid="cve-summary-container" className={["cve-summary-card", className].filter(Boolean).join(" ")} style={{ width: '100%', padding: '24px', border: '1px solid var(--bragi-border, #e5e7eb)', borderRadius: '8px', boxSizing: 'border-box', ...style }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', alignItems: 'center' }}>
+        <h2 style={{ margin: 0 }}>{cveMetadata.cveId}</h2>
+        {cvssSeverity && <span style={{ color: severityColor, fontWeight: 700 }}>{cvssSeverity}</span>}
+      </header>
 
-      <Divider style={{ margin: '16px 0' }} />
+      {cnaContainer?.title && <h3 style={{ ...sectionStyle, color: 'var(--bragi-info, #2563eb)' }}>{cnaContainer.title}</h3>}
 
-      {/* Title */}
-      {cnaContainer?.title && (
-        <>
-          <Title level={4} style={{ color: '#1890ff' }}>
-            {cnaContainer.title}
-          </Title>
-          <Divider style={{ margin: '12px 0' }} />
-        </>
-      )}
-
-      {/* Description */}
       {description && (
-        <>
-          <Title level={5}>Descripción</Title>
-          <Paragraph>{description}</Paragraph>
-          <Divider />
-        </>
+        <section style={sectionStyle}>
+          <h4>Descripción</h4>
+          <p>{description}</p>
+        </section>
       )}
 
-      {/* CVSS Score Card */}
-      {cvssScore && (
-        <>
-          <Row gutter={[16, 16]} style={{ marginBottom: '16px' }}>
-            <Col xs={24} sm={12}>
-              <Card
-                type="inner"
-                title="Puntuación CVSS v3.1"
-                style={{ background: '#fafafa' }}
-              >
-                <Row align="middle" gutter={[16, 0]}>
-                  <Col>
-                    <Text style={{ fontSize: '32px', fontWeight: 'bold', color: getSeverityColor(cvssSeverity) }}>
-                      {cvssScore}
-                    </Text>
-                  </Col>
-                  <Col>
-                    <Tag color={getSeverityColor(cvssSeverity)} style={{ fontSize: '14px', padding: '6px 12px' }}>
-                      {cvssSeverity}
-                    </Tag>
-                  </Col>
-                </Row>
-              </Card>
-            </Col>
-
-            {/* Publication Dates */}
-            <Col xs={24} sm={12}>
-              <Card type="inner" title="Fechas" style={{ background: '#fafafa' }}>
-                <Space direction="vertical" style={{ width: '100%' }}>
-                  <div>
-                    <Text strong>Publicado:</Text>
-                    <br />
-                    <Text>{new Date(cveMetadata.datePublished).toLocaleDateString()}</Text>
-                  </div>
-                  {cveMetadata.dateUpdated && (
-                    <div>
-                      <Text strong>Actualizado:</Text>
-                      <br />
-                      <Text>{new Date(cveMetadata.dateUpdated).toLocaleDateString()}</Text>
-                    </div>
-                  )}
-                </Space>
-              </Card>
-            </Col>
-          </Row>
-
-          {/* CVSS Vector and Details */}
-          {cvssMetric && (
-            <>
-              <Card type="inner" title="Detalles de la Métrica CVSS" style={{ background: '#fafafa', marginBottom: '16px' }}>
-                {cvssMetric.vectorString && (
-                  <div style={{ marginBottom: '12px' }}>
-                    <Text strong>Vector:</Text>
-                    <br />
-                    <Text code style={{ fontSize: '11px', wordBreak: 'break-all', display: 'block', marginTop: '4px' }}>
-                      {cvssMetric.vectorString}
-                    </Text>
-                  </div>
-                )}
-                {cvssMetric.attackVector && (
-                  <Row gutter={[16, 8]}>
-                    <Col xs={24} sm={12}>
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          <strong>Ataque:</strong> {cvssMetric.attackVector}
-                        </Text>
-                      </div>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          <strong>Complejidad:</strong> {cvssMetric.attackComplexity}
-                        </Text>
-                      </div>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          <strong>Privilegios:</strong> {cvssMetric.privilegesRequired}
-                        </Text>
-                      </div>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          <strong>Interacción:</strong> {cvssMetric.userInteraction}
-                        </Text>
-                      </div>
-                    </Col>
-                    <Col xs={24} sm={12}>
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          <strong>Scope:</strong> {cvssMetric.scope}
-                        </Text>
-                      </div>
-                    </Col>
-                  </Row>
-                )}
-              </Card>
-              <Divider />
-            </>
-          )}
-        </>
+      {cvssScore !== undefined && (
+        <section style={{ ...sectionStyle, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+          <div style={panelStyle}>
+            <h4>Puntuación CVSS v3.1</h4>
+            <strong style={{ fontSize: '32px', color: severityColor }}>{cvssScore}</strong>
+            {cvssSeverity && <span style={{ marginLeft: '12px', color: severityColor }}>{cvssSeverity}</span>}
+          </div>
+          <div style={panelStyle}>
+            <h4>Fechas</h4>
+            <p><strong>Publicado:</strong> {new Date(cveMetadata.datePublished).toLocaleDateString()}</p>
+            {cveMetadata.dateUpdated && <p><strong>Actualizado:</strong> {new Date(cveMetadata.dateUpdated).toLocaleDateString()}</p>}
+          </div>
+        </section>
       )}
 
-      {/* Affected Products */}
-      {cnaContainer?.affected && cnaContainer.affected.length > 0 && (
-        <>
-          <Title level={5}>Productos Afectados</Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            {cnaContainer.affected.map((product, idx) => (
-              <Card key={idx} size="small" style={{ background: '#f0f5ff' }}>
-                <Row gutter={[16, 8]} align="top">
-                  <Col xs={24} sm={12} md={20}>
-                    {product.vendor && (
-                      <div style={{ marginBottom: '8px' }}>
-                        <Text strong>{product.vendor}</Text>
-                      </div>
-                    )}
-                    <Tag color="blue">{product.product}</Tag>
-                  </Col>
-                  <Col xs={24} sm={12} md={4}>
-                    {product.versions && product.versions.length > 0 && (
-                      <div>
-                        <Text type="secondary" style={{ fontSize: '12px' }}>
-                          <strong>Versiones:</strong>
-                        </Text>
-                        <div style={{ marginTop: '4px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {product.versions.map((v, vidx) => (
-                            <Tag key={vidx} style={{ fontSize: '11px' }}>
-                              {v.version || 'N/A'}
-                            </Tag>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </Col>
-                </Row>
-              </Card>
-            ))}
-          </Space>
-          <Divider />
-        </>
+      {cvssMetric && (
+        <section style={sectionStyle}>
+          <h4>Detalles de la Métrica CVSS</h4>
+          {cvssMetric.vectorString && <p><strong>Vector:</strong> <code style={{ wordBreak: 'break-all' }}>{cvssMetric.vectorString}</code></p>}
+          <dl style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px' }}>
+            {[
+              ['Ataque', cvssMetric.attackVector],
+              ['Complejidad', cvssMetric.attackComplexity],
+              ['Privilegios', cvssMetric.privilegesRequired],
+              ['Interacción', cvssMetric.userInteraction],
+              ['Scope', cvssMetric.scope],
+            ].map(([label, value]) => value && <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+          </dl>
+        </section>
       )}
 
-      {/* References */}
-      {cnaContainer?.references && cnaContainer.references.length > 0 && (
-        <>
-          <Title level={5}>Referencias</Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            {cnaContainer.references.map((ref, idx) => (
-              <Button
-                key={idx}
-                type="text"
-                icon={<FiExternalLink />}
-                href={ref.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                block
-                style={{ textAlign: 'left', height: 'auto', padding: '8px 0' }}
-              >
-                <Text ellipsis>{ref.name || ref.url}</Text>
-              </Button>
-            ))}
-          </Space>
-          <Divider />
-        </>
-      )}
-
-      {/* Problem Types */}
-      {cnaContainer?.problemTypes && cnaContainer.problemTypes.length > 0 && (
-        <>
-          <Title level={5}>Tipos de Problema</Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            {cnaContainer.problemTypes.map((problem, idx) => (
-              <div key={idx}>
-                {problem.descriptions && problem.descriptions.length > 0 && (
-                  <Card type="inner" size="small" style={{ background: '#fff7e6' }}>
-                    {problem.descriptions.map((desc, didx) => (
-                      <div key={didx} style={{ marginBottom: didx === problem.descriptions!.length - 1 ? 0 : '8px' }}>
-                        {desc.cweId && (
-                          <Tag color="orange" style={{ marginRight: '8px' }}>
-                            {desc.cweId}
-                          </Tag>
-                        )}
-                        <Text>{desc.value}</Text>
-                      </div>
-                    ))}
-                  </Card>
-                )}
+      {cnaContainer?.affected?.length ? (
+        <section style={sectionStyle}>
+          <h4>Productos Afectados</h4>
+          <div style={{ display: 'grid', gap: '8px' }}>
+            {cnaContainer.affected.map((product, index) => (
+              <div key={index} style={{ ...panelStyle, background: 'var(--bragi-info-background, #eff6ff)' }}>
+                {product.vendor && <strong>{product.vendor}</strong>}
+                <div>{product.product}</div>
+                {product.versions?.length ? <small>Versiones: {product.versions.map((version) => version.version).join(', ')}</small> : null}
               </div>
             ))}
-          </Space>
-          <Divider />
-        </>
-      )}
+          </div>
+        </section>
+      ) : null}
 
-      {/* Solutions/Fixes */}
-      {cnaContainer?.solutions && cnaContainer.solutions.length > 0 && (
-        <>
-          <Title level={5}>Parches y Soluciones</Title>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            {cnaContainer.solutions.map((solution, idx) => (
-              <Card key={idx} type="inner" size="small" style={{ background: '#f6ffed' }}>
-                {solution.lang && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <Tag>{solution.lang}</Tag>
-                  </div>
-                )}
-                <Paragraph>{solution.value}</Paragraph>
-              </Card>
+      {cnaContainer?.references?.length ? (
+        <section style={sectionStyle}>
+          <h4>Referencias</h4>
+          <ul>
+            {cnaContainer.references.map((reference, index) => (
+              <li key={index}><a href={reference.url} target="_blank" rel="noopener noreferrer">{reference.name || reference.url}</a></li>
             ))}
-          </Space>
-          <Divider />
-        </>
-      )}
+          </ul>
+        </section>
+      ) : null}
 
-      {/* Additional Info */}
+      {cnaContainer?.problemTypes?.length ? (
+        <section style={sectionStyle}>
+          <h4>Tipos de Problema</h4>
+          {cnaContainer.problemTypes.map((problem, index) => problem.descriptions?.map((description, descriptionIndex) => (
+            <p key={`${index}-${descriptionIndex}`} style={panelStyle}>{description.cweId && <strong>{description.cweId}: </strong>}{description.value}</p>
+          )))}
+        </section>
+      ) : null}
+
+      {cnaContainer?.solutions?.length ? (
+        <section style={sectionStyle}>
+          <h4>Parches y Soluciones</h4>
+          {cnaContainer.solutions.map((solution, index) => <p key={index} style={{ ...panelStyle, background: 'var(--bragi-success-background, #f0fdf4)' }}>{solution.lang && <strong>{solution.lang}: </strong>}{solution.value}</p>)}
+        </section>
+      ) : null}
+
       {cveMetadata.assignerOrgName && (
-        <>
-          <Divider />
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12}>
-              <Text type="secondary">
-                <strong>Asignador:</strong> {cveMetadata.assignerOrgName}
-              </Text>
-            </Col>
-            {cveMetadata.assignerShortName && (
-              <Col xs={24} sm={12}>
-                <Text type="secondary">
-                  <strong>Código:</strong> {cveMetadata.assignerShortName}
-                </Text>
-              </Col>
-            )}
-          </Row>
-        </>
+        <footer style={sectionStyle}>
+          <small><strong>Asignador:</strong> {cveMetadata.assignerOrgName}{cveMetadata.assignerShortName && ` (${cveMetadata.assignerShortName})`}</small>
+        </footer>
       )}
-    </Card>
+    </article>
   );
 };

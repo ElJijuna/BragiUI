@@ -1,41 +1,29 @@
-import React, { useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
 import { CVESummary } from '../CVESummary/CVESummary';
-
-const queryClient = new QueryClient();
+import { CVEData } from './domain/types';
 
 export const CVESummaryExample: React.FC = () => {
-  const [cveId, setCveId] = useState<string>('CVE-2025-36000');
+  const data: CVEData = {
+    cveMetadata: {
+      cveId: 'CVE-2025-36000',
+      assignerOrgName: 'Example Organization',
+      assignerShortName: 'EXAMPLE',
+      dateReserved: '2025-01-01T00:00:00Z',
+      datePublished: '2025-01-02T00:00:00Z',
+      dateUpdated: '2025-01-03T00:00:00Z',
+    },
+    containers: {
+      cna: {
+        title: 'Example vulnerability',
+        descriptions: [{ value: 'Data is supplied by the host application.' }],
+      },
+    },
+  };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-        <h1>CVE Lookup Tool</h1>
-        
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="cve-input" style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-            Enter CVE ID:
-          </label>
-          <input
-            id="cve-input"
-            type="text"
-            value={cveId}
-            onChange={(e) => setCveId(e.target.value)}
-            placeholder="e.g., CVE-2025-36000"
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '16px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              boxSizing: 'border-box',
-            }}
-          />
-        </div>
-
-        <CVESummary cve={cveId} />
-      </div>
-    </QueryClientProvider>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      <CVESummary data={data} />
+    </div>
   );
 };
 

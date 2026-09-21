@@ -123,7 +123,11 @@ export interface CVEData {
 }
 
 export interface CVESummaryProps {
-  cve: string;
+  className?: string;
+  style?: import('react').CSSProperties;
+  data?: CVEData | null;
+  loading?: boolean;
+  error?: Error | null;
 }
 
 export interface ParsedCVEId {

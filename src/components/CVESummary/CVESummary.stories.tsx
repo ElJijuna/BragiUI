@@ -1,18 +1,27 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ConfigProvider } from 'antd';
 import { CVESummary } from './CVESummary';
-
-// Create a client for Storybook
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-    },
-  },
-});
+import { CVEData } from './domain/types';
 
 type CVESummaryStory = StoryObj<typeof CVESummary>;
+
+const cveData: CVEData = {
+  cveMetadata: {
+    cveId: 'CVE-2025-36000',
+    assignerOrgName: 'Test Organization',
+    assignerShortName: 'TEST',
+    dateReserved: '2025-01-01T00:00:00Z',
+    datePublished: '2025-01-02T00:00:00Z',
+    dateUpdated: '2025-01-03T00:00:00Z',
+  },
+  containers: {
+    cna: {
+      title: 'Test Vulnerability',
+      descriptions: [{ value: 'This is a test CVE description' }],
+      affected: [{ product: 'TestProduct', vendor: 'TestVendor', versions: [] }],
+      references: [{ url: 'https://example.com', name: 'Example Reference' }],
+    },
+  },
+};
 
 const meta: Meta<typeof CVESummary> = {
   title: 'Components/CVESummary',
@@ -23,13 +32,9 @@ const meta: Meta<typeof CVESummary> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <QueryClientProvider client={queryClient}>
-        <ConfigProvider>
-          <div style={{ width: '100%', maxWidth: '900px', padding: '24px' }}>
-            <Story />
-          </div>
-        </ConfigProvider>
-      </QueryClientProvider>
+      <div style={{ width: '100%', maxWidth: '900px', padding: '24px' }}>
+        <Story />
+      </div>
     ),
   ],
 };
@@ -42,7 +47,7 @@ type Story = CVESummaryStory;
  */
 export const Default: Story = {
   args: {
-    cve: 'CVE-2025-36000',
+    data: cveData,
   },
 };
 
@@ -50,9 +55,7 @@ export const Default: Story = {
  * Empty state when no CVE ID is provided
  */
 export const Empty: Story = {
-  args: {
-    cve: '',
-  },
+  args: {},
 };
 
 /**
@@ -60,7 +63,7 @@ export const Empty: Story = {
  */
 export const InvalidCVE: Story = {
   args: {
-    cve: 'INVALID-CVE',
+    error: new Error('Invalid CVE format'),
   },
 };
 
@@ -69,6 +72,6 @@ export const InvalidCVE: Story = {
  */
 export const RealCVEExample: Story = {
   args: {
-    cve: 'CVE-2024-1234',
+    data: cveData,
   },
 };
