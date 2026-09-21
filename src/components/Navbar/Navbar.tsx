@@ -68,21 +68,10 @@ function useReducedMotion() {
 
 function MenuItem({ item, iconOnly = false, inSidebar = false, reducedMotion = false }: { item: NavbarItem; iconOnly?: boolean; inSidebar?: boolean; reducedMotion?: boolean }) {
   const integrated = item.active && inSidebar;
-  const outerCorner = (side: 'top' | 'bottom') => (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 16 16"
-      style={{ position: 'absolute', right: -1, [side]: -16, width: 16, height: 16, pointerEvents: 'none' }}
-    >
-      <path d={side === 'top' ? 'M16 0 V16 H0 A16 16 0 0 0 16 0 Z' : 'M16 16 V0 H0 A16 16 0 0 1 16 16 Z'} fill="var(--bragi-workspace-background, #fff)" />
-    </svg>
-  );
   const content = (
     <>
-      {integrated && outerCorner('top')}
       {item.icon && <span aria-hidden="true" style={{ display: 'inline-flex', flexShrink: 0 }}>{item.icon}</span>}
       <span aria-hidden={iconOnly || undefined} style={{ display: 'inline-block', overflow: 'hidden', maxWidth: iconOnly ? 0 : 180, opacity: iconOnly ? 0 : 1, whiteSpace: 'nowrap', transition: reducedMotion ? 'none' : 'max-width var(--bragi-motion-duration, 220ms) ease, opacity var(--bragi-motion-fast, 160ms) ease' }}>{item.label}</span>
-      {integrated && outerCorner('bottom')}
     </>
   );
   const commonStyle: React.CSSProperties = {
@@ -103,6 +92,10 @@ function MenuItem({ item, iconOnly = false, inSidebar = false, reducedMotion = f
     textDecoration: 'none',
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
+    borderTop: integrated ? '1px solid var(--bragi-border, #d1d5db)' : 0,
+    borderBottom: integrated ? '1px solid var(--bragi-border, #d1d5db)' : 0,
+    borderLeft: integrated ? '1px solid var(--bragi-border, #d1d5db)' : 0,
+    borderRight: 0,
     overflow: integrated ? 'visible' : 'hidden',
     transition: reducedMotion ? 'none' : 'background-color var(--bragi-motion-fast, 160ms) ease, color var(--bragi-motion-fast, 160ms) ease, gap var(--bragi-motion-duration, 220ms) ease',
   };
@@ -113,7 +106,7 @@ function MenuItem({ item, iconOnly = false, inSidebar = false, reducedMotion = f
   if (item.href) {
     return <a href={item.href} onClick={item.onSelect} aria-current={item.active ? 'page' : undefined} aria-label={accessibleName} title={iconOnly ? item.label : undefined} style={commonStyle}>{content}</a>;
   }
-  return <button type="button" onClick={item.onSelect} aria-current={item.active ? 'page' : undefined} aria-label={accessibleName} title={iconOnly ? item.label : undefined} style={{ ...commonStyle, border: 0, font: 'inherit', cursor: 'pointer' }}>{content}</button>;
+  return <button type="button" onClick={item.onSelect} aria-current={item.active ? 'page' : undefined} aria-label={accessibleName} title={iconOnly ? item.label : undefined} style={{ ...commonStyle, font: 'inherit', cursor: 'pointer' }}>{content}</button>;
 }
 
 export function Navbar({
