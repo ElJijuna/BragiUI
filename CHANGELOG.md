@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/ElJijuna/BragiUI/compare/v1.0.0...v1.1.0) (2026-09-21)
+
+
+### Features
+
+* add TanStack Router integration with Navbar component stories ([a0b372e](https://github.com/ElJijuna/BragiUI/commit/a0b372e267e878e2385d2d67da18de64bb89ef1c))
+
 # 1.0.0 (2026-09-21)
 
 
