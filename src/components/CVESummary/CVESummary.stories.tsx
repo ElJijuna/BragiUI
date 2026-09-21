@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { CVESummary } from './CVESummary';
-import { CVEData } from './domain/types';
+import type { CVEData } from './domain/types';
 
 type CVESummaryStory = StoryObj<typeof CVESummary>;
 

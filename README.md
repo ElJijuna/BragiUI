@@ -74,8 +74,10 @@ La librería se compila con TypeScript 6, pero sus declaraciones usan sintaxis c
 
 ```sh
 npm install
-npm run lint
+npm run check          # typecheck + eslint + biome
 npm test -- --runInBand
 npm run build
 npm run build-storybook
 ```
+
+El proyecto usa [super-configs](https://www.npmjs.com/package/super-configs) para ESLint 10 (`eslint.config.js`) y Biome (`biome.json`). `npm run lint:fix` aplica arreglos automáticos de ESLint y `npm run format` formatea con Biome.

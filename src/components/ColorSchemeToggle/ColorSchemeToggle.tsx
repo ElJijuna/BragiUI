@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import type { CSSProperties, FC } from 'react';
+import { useState } from 'react';
 
-interface ColorSchemeToggleProps {
+export interface ColorSchemeToggleProps {
   onToggle?: (scheme: 'light' | 'dark') => void;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
   defaultScheme?: 'light' | 'dark';
 }
 
-export const ColorSchemeToggle: React.FC<ColorSchemeToggleProps> = ({
+export const ColorSchemeToggle: FC<ColorSchemeToggleProps> = ({
   onToggle,
   defaultScheme = 'light',
   className,
@@ -31,8 +32,14 @@ export const ColorSchemeToggle: React.FC<ColorSchemeToggleProps> = ({
         padding: 'var(--bragi-toggle-padding, 8px 16px)',
         borderRadius: 'var(--bragi-radius-sm, 4px)',
         border: '1px solid var(--bragi-border, #ccc)',
-        background: scheme === 'light' ? 'var(--bragi-toggle-light-background, #fff)' : 'var(--bragi-toggle-dark-background, #333)',
-        color: scheme === 'light' ? 'var(--bragi-toggle-light-foreground, #000)' : 'var(--bragi-toggle-dark-foreground, #fff)',
+        background:
+          scheme === 'light'
+            ? 'var(--bragi-toggle-light-background, #fff)'
+            : 'var(--bragi-toggle-dark-background, #333)',
+        color:
+          scheme === 'light'
+            ? 'var(--bragi-toggle-light-foreground, #000)'
+            : 'var(--bragi-toggle-dark-foreground, #fff)',
         cursor: 'pointer',
         fontSize: '14px',
         fontWeight: 500,

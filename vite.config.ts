@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath } from 'node:url';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
-const source = (file: string) => fileURLToPath(new URL(file, import.meta.url))
+const source = (file: string) => fileURLToPath(new URL(file, import.meta.url));
 
 export default defineConfig({
   plugins: [react()],
@@ -20,5 +20,5 @@ export default defineConfig({
     rolldownOptions: {
       external: [/^react(?:\/.*)?$/, /^react-dom(?:\/.*)?$/],
     },
-  }
-})
+  },
+});

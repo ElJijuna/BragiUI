@@ -1,13 +1,13 @@
-import React from 'react';
+import type { CSSProperties, FC } from 'react';
 
-interface WelcomeProps {
+export interface WelcomeProps {
   title?: string;
   message?: string;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
-export const Welcome: React.FC<WelcomeProps> = ({
+export const Welcome: FC<WelcomeProps> = ({
   title = 'Welcome to BragiUI',
   message = 'A modern React component library',
   className,
@@ -19,7 +19,8 @@ export const Welcome: React.FC<WelcomeProps> = ({
       style={{
         padding: 'var(--bragi-space-lg, 32px)',
         textAlign: 'center',
-        background: 'var(--bragi-welcome-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%))',
+        background:
+          'var(--bragi-welcome-background, linear-gradient(135deg, #667eea 0%, #764ba2 100%))',
         borderRadius: 'var(--bragi-radius-lg, 8px)',
         color: 'var(--bragi-welcome-foreground, white)',
         ...style,

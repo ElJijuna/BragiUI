@@ -1,10 +1,17 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Navbar } from './Navbar';
 
 const sections = [
-  { id: 'main', label: 'Principal', items: [{ id: 'home', label: 'Inicio', href: '/inicio', icon: '⌂', active: true }] },
-  { id: 'admin', label: 'Administración', items: [{ id: 'settings', label: 'Ajustes', href: '/ajustes', icon: '⚙' }] },
+  {
+    id: 'main',
+    label: 'Principal',
+    items: [{ id: 'home', label: 'Inicio', href: '/inicio', icon: '⌂', active: true }],
+  },
+  {
+    id: 'admin',
+    label: 'Administración',
+    items: [{ id: 'settings', label: 'Ajustes', href: '/ajustes', icon: '⚙' }],
+  },
 ];
 
 describe('Navbar', () => {
@@ -30,10 +37,19 @@ describe('Navbar', () => {
 
   it('renders both top menus and submits the search query', () => {
     const onSubmit = jest.fn();
-    render(<Navbar brand="BragiUI" topLeftItems={[{ id: 'one', label: 'Menú 1', href: '/one' }]} topRightItems={[{ id: 'four', label: 'Menú 4', href: '/four' }]} search={{ onSubmit }} />);
+    render(
+      <Navbar
+        brand="BragiUI"
+        topLeftItems={[{ id: 'one', label: 'Menú 1', href: '/one' }]}
+        topRightItems={[{ id: 'four', label: 'Menú 4', href: '/four' }]}
+        search={{ onSubmit }}
+      />,
+    );
     expect(screen.getByRole('navigation', { name: 'Navegación principal' })).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Navegación secundaria' })).toBeInTheDocument();
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar' }), { target: { value: '  CVE  ' } });
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Buscar' }), {
+      target: { value: '  CVE  ' },
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Enviar búsqueda' }));
     expect(onSubmit).toHaveBeenCalledWith('CVE');
   });
@@ -43,7 +59,10 @@ describe('Navbar', () => {
     render(<Navbar brand="BragiUI" collapsed={false} onCollapsedChange={onCollapsedChange} />);
     fireEvent.click(screen.getByRole('button', { name: 'Contraer menú lateral' }));
     expect(onCollapsedChange).toHaveBeenCalledWith(true);
-    expect(screen.getByRole('complementary', { name: 'Menú lateral' })).toHaveAttribute('data-collapsed', 'false');
+    expect(screen.getByRole('complementary', { name: 'Menú lateral' })).toHaveAttribute(
+      'data-collapsed',
+      'false',
+    );
   });
 
   it('fills the viewport below the top bar by default', () => {
@@ -57,17 +76,23 @@ describe('Navbar', () => {
   });
 
   it('disables transitions when reduced motion is requested', () => {
-    const previous = window.matchMedia;
+    const descriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
     Object.defineProperty(window, 'matchMedia', {
       configurable: true,
       value: () => ({ matches: true, addEventListener: () => {}, removeEventListener: () => {} }),
     });
     try {
       render(<Navbar brand="BragiUI" sidebarSections={sections} />);
-      expect(screen.getByRole('complementary', { name: 'Menú lateral' }).style.transition).toBe('none');
+      expect(screen.getByRole('complementary', { name: 'Menú lateral' }).style.transition).toBe(
+        'none',
+      );
       expect(screen.getByRole('link', { name: 'Inicio' }).style.transition).toBe('none');
     } finally {
-      Object.defineProperty(window, 'matchMedia', { configurable: true, value: previous });
+      if (descriptor) {
+        Object.defineProperty(window, 'matchMedia', descriptor);
+      } else {
+        delete (window as { matchMedia?: unknown }).matchMedia;
+      }
     }
   });
 });

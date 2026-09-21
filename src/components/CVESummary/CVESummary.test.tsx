@@ -1,7 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { CVESummary } from './CVESummary';
-import { CVEData } from './domain/types';
+import type { CVEData } from './domain/types';
 
 const cveData: CVEData = {
   cveMetadata: {

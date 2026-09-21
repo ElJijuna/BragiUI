@@ -1,34 +1,42 @@
-import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { Navbar, type NavbarProps } from './Navbar';
 
 const sections = [
   {
-    id: 'workspace', label: 'Espacio de trabajo', items: [
+    id: 'workspace',
+    label: 'Espacio de trabajo',
+    items: [
       { id: 'home', label: 'Inicio', icon: '⌂', active: true },
       { id: 'projects', label: 'Proyectos', icon: '▦' },
     ],
   },
   {
-    id: 'account', label: 'Cuenta', items: [
+    id: 'account',
+    label: 'Cuenta',
+    items: [
       { id: 'settings', label: 'Configuración', icon: '⚙' },
       { id: 'help', label: 'Ayuda', icon: '?' },
     ],
   },
 ];
 
-function InteractiveNavbar(args: NavbarProps) {
+const InteractiveNavbar = (args: NavbarProps) => {
   const [activeId, setActiveId] = useState(
-    () => args.sidebarSections?.flatMap(section => section.items).find(item => item.active)?.id ?? 'home',
+    () =>
+      args.sidebarSections?.flatMap((section) => section.items).find((item) => item.active)?.id ??
+      'home',
   );
-  const activeItem = args.sidebarSections?.flatMap(section => section.items).find(item => item.id === activeId);
+  const activeItem = args.sidebarSections
+    ?.flatMap((section) => section.items)
+    .find((item) => item.id === activeId);
 
   return (
     <Navbar
       {...args}
-      sidebarSections={args.sidebarSections?.map(section => ({
+      sidebarSections={args.sidebarSections?.map((section) => ({
         ...section,
-        items: section.items.map(item => ({
+        items: section.items.map((item) => ({
           ...item,
           active: item.id === activeId,
           onSelect: () => {
@@ -44,12 +52,12 @@ function InteractiveNavbar(args: NavbarProps) {
       </div>
     </Navbar>
   );
-}
+};
 
 const meta = {
   title: 'Components/Navbar',
   component: Navbar,
-  render: args => <InteractiveNavbar {...args} />,
+  render: (args) => <InteractiveNavbar {...args} />,
   parameters: { layout: 'fullscreen' },
   tags: ['autodocs'],
   args: {

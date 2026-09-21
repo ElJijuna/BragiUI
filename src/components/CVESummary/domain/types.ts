@@ -1,4 +1,6 @@
 // Domain interfaces and types for CVE data
+import type { CSSProperties } from 'react';
+
 export interface CVEAffected {
   product: string;
   vendor?: string;
@@ -124,7 +126,7 @@ export interface CVEData {
 
 export interface CVESummaryProps {
   className?: string;
-  style?: import('react').CSSProperties;
+  style?: CSSProperties;
   data?: CVEData | null;
   loading?: boolean;
   error?: Error | null;

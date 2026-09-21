@@ -1,8 +1,8 @@
-import React from 'react';
+import type { FC } from 'react';
 import { CVESummary } from '../CVESummary/CVESummary';
-import { CVEData } from './domain/types';
+import type { CVEData } from './domain/types';
 
-export const CVESummaryExample: React.FC = () => {
+export const CVESummaryExample: FC = () => {
   const data: CVEData = {
     cveMetadata: {
       cveId: 'CVE-2025-36000',
