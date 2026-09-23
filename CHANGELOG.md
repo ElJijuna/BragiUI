@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/ElJijuna/BragiUI/compare/v1.1.0...v1.2.0) (2026-09-23)
+
+
+### Features
+
+* enhance Navbar with sticky positioning and support for ReactNode in topLeftItems ([4551b42](https://github.com/ElJijuna/BragiUI/commit/4551b427ceca2c0db63191b1f9ca2e61db7238b7))
+
 # [1.1.0](https://github.com/ElJijuna/BragiUI/compare/v1.0.0...v1.1.0) (2026-09-21)
 
 
