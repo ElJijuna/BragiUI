@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/ElJijuna/BragiUI/compare/v1.2.0...v1.3.0) (2026-09-23)
+
+
+### Features
+
+* add sidebarFooter prop to Navbar and corresponding story and test ([1086754](https://github.com/ElJijuna/BragiUI/commit/1086754bafd0e1ee9cf339a71309ce9baa9ec788))
+* add story for Navbar with green background and update styles for transparency ([a6cf626](https://github.com/ElJijuna/BragiUI/commit/a6cf626d995edeb39eee00f9306ec674017e319d))
+
 # [1.2.0](https://github.com/ElJijuna/BragiUI/compare/v1.1.0...v1.2.0) (2026-09-23)
 
 
