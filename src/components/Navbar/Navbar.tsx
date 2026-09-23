@@ -28,6 +28,7 @@ export interface NavbarProps {
   topLeftItems?: NavbarItem[] | ReactNode;
   topRightItems?: NavbarItem[];
   sidebarSections?: NavbarSection[];
+  sidebarFooter?: ReactNode;
   search?: NavbarSearch;
   children?: ReactNode;
   collapsed?: boolean;
@@ -227,6 +228,7 @@ export const Navbar = ({
   topLeftItems = [],
   topRightItems = [],
   sidebarSections = [],
+  sidebarFooter,
   search,
   children,
   collapsed,
@@ -380,6 +382,8 @@ export const Navbar = ({
           aria-label={sidebarLabel}
           data-collapsed={isCollapsed}
           style={{
+            display: 'flex',
+            flexDirection: 'column',
             flex: '0 0 auto',
             width: isCollapsed
               ? 'var(--bragi-sidebar-collapsed-width, 64px)'
@@ -395,7 +399,7 @@ export const Navbar = ({
             transition: reducedMotion ? 'none' : 'width var(--bragi-motion-duration, 220ms) ease',
           }}
         >
-          <nav aria-label={sidebarLabel}>
+          <nav aria-label={sidebarLabel} style={{ flex: '1 1 auto' }}>
             {sidebarSections.map((section, index) => (
               <section
                 key={section.id}
@@ -427,6 +431,18 @@ export const Navbar = ({
               </section>
             ))}
           </nav>
+          {sidebarFooter && (
+            <div
+              style={{
+                flex: '0 0 auto',
+                borderTop: '1px solid var(--bragi-border, #d1d5db)',
+                marginTop: 12,
+                paddingTop: 12,
+              }}
+            >
+              {sidebarFooter}
+            </div>
+          )}
         </aside>
         <main
           style={{

@@ -97,6 +97,46 @@ export const OnGreenBackground: Story = {
   ),
 };
 
+export const WithSidebarFooter: Story = {
+  args: {
+    sidebarFooter: (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px' }}>
+        <span
+          aria-hidden="true"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 32,
+            height: 32,
+            flexShrink: 0,
+            borderRadius: '50%',
+            background: 'var(--bragi-nav-active-background, #eff6ff)',
+            color: 'var(--bragi-nav-active-foreground, #1d4ed8)',
+            fontWeight: 700,
+          }}
+        >
+          AB
+        </span>
+        <div style={{ overflow: 'hidden' }}>
+          <div style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden' }}>Ana Bravo</div>
+          <div
+            style={{
+              fontSize: 12,
+              color: 'var(--bragi-muted, #6b7280)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            ana@bragiui.dev
+          </div>
+        </div>
+      </div>
+    ),
+  },
+};
+
 export const WithBreadcrumbAndSticky: Story = {
   args: {
     topLeftItems: (

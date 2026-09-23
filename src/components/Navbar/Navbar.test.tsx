@@ -106,6 +106,19 @@ describe('Navbar', () => {
     expect(sidebar.style.overflowY).toBe('auto');
   });
 
+  it('renders a custom ReactNode at the bottom of the sidebar', () => {
+    render(
+      <Navbar
+        brand="BragiUI"
+        sidebarSections={sections}
+        sidebarFooter={<button type="button">Cerrar sesión</button>}
+      />,
+    );
+    const sidebar = screen.getByRole('complementary', { name: 'Menú lateral' });
+    const footerButton = screen.getByRole('button', { name: 'Cerrar sesión' });
+    expect(sidebar).toContainElement(footerButton);
+  });
+
   it('does not render a sidebar section heading when its label is empty', () => {
     render(
       <Navbar
