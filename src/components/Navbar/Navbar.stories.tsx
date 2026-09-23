@@ -80,3 +80,36 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Collapsed: Story = { args: { defaultCollapsed: true } };
+
+export const WithBreadcrumbAndSticky: Story = {
+  args: {
+    topLeftItems: (
+      <nav aria-label="Breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <a href="#inicio">Inicio</a>
+        <span aria-hidden="true">/</span>
+        <a href="#proyectos">Proyectos</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Detalle</span>
+      </nav>
+    ),
+    sticky: true,
+    sidebarSections: [{ ...sections[0], label: '' }, sections[1]],
+  },
+  render: (args) => (
+    <Navbar {...args}>
+      <div style={{ padding: 24, display: 'grid', gap: 12 }}>
+        <h1>Contenido con scroll</h1>
+        <p>
+          En esta historia <code>topLeftItems</code> recibe un breadcrumb (ReactNode) en lugar de
+          una lista de <code>NavbarItem</code>, el navbar y el sidebar son sticky (permanecen fijos
+          al hacer scroll) y la sección "Espacio de trabajo" no muestra encabezado porque su{' '}
+          <code>label</code> está vacío.
+        </p>
+        {Array.from({ length: 30 }, (_, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: static demo content
+          <p key={index}>Línea de contenido {index + 1} para forzar scroll vertical.</p>
+        ))}
+      </div>
+    </Navbar>
+  ),
+};

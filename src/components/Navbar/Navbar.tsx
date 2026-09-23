@@ -25,7 +25,7 @@ export interface NavbarSearch {
 
 export interface NavbarProps {
   brand: ReactNode;
-  topLeftItems?: NavbarItem[];
+  topLeftItems?: NavbarItem[] | ReactNode;
   topRightItems?: NavbarItem[];
   sidebarSections?: NavbarSection[];
   search?: NavbarSearch;
@@ -36,6 +36,14 @@ export interface NavbarProps {
   className?: string;
   style?: CSSProperties;
   sidebarLabel?: string;
+  sticky?: boolean;
+}
+
+function isNavbarItemArray(value: NavbarItem[] | ReactNode): value is NavbarItem[] {
+  return (
+    Array.isArray(value) &&
+    (value.length === 0 || (typeof value[0] === 'object' && value[0] !== null && 'id' in value[0]))
+  );
 }
 
 const iconButtonStyle: CSSProperties = {
@@ -182,6 +190,38 @@ const MenuItem = ({
   );
 };
 
+const SidebarSectionHeading = ({
+  label,
+  isCollapsed,
+  reducedMotion,
+}: {
+  label: string;
+  isCollapsed: boolean;
+  reducedMotion: boolean;
+}) => (
+  <>
+    {/* biome-ignore lint/a11y/useHeadingContent: aria-hidden only applies while collapsed to icon-only mode; the label text is present and exposed otherwise */}
+    <h2
+      aria-hidden={isCollapsed || undefined}
+      style={{
+        margin: isCollapsed ? '0 12px' : '8px 12px',
+        maxHeight: isCollapsed ? 0 : 24,
+        opacity: isCollapsed ? 0 : 1,
+        overflow: 'hidden',
+        color: 'var(--bragi-muted, #6b7280)',
+        fontSize: 'var(--bragi-sidebar-heading-size, 12px)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.04em',
+        transition: reducedMotion
+          ? 'none'
+          : 'max-height var(--bragi-motion-duration, 220ms) ease, opacity var(--bragi-motion-fast, 160ms) ease, margin var(--bragi-motion-duration, 220ms) ease',
+      }}
+    >
+      {label}
+    </h2>
+  </>
+);
+
 export const Navbar = ({
   brand,
   topLeftItems = [],
@@ -195,6 +235,7 @@ export const Navbar = ({
   className,
   style,
   sidebarLabel = 'Menú lateral',
+  sticky = false,
 }: NavbarProps) => {
   const [internalCollapsed, setInternalCollapsed] = useState(defaultCollapsed);
   const [query, setQuery] = useState('');
@@ -233,6 +274,9 @@ export const Navbar = ({
           borderBottom: '1px solid var(--bragi-border, #d1d5db)',
           background: 'var(--bragi-nav-background, #fff)',
           boxSizing: 'border-box',
+          position: sticky ? 'sticky' : undefined,
+          top: sticky ? 0 : undefined,
+          zIndex: sticky ? 10 : undefined,
         }}
       >
         <button
@@ -262,16 +306,18 @@ export const Navbar = ({
         >
           {brand}
         </div>
-        {topLeftItems.length > 0 && (
-          <nav
-            aria-label="Navegación principal"
-            style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}
-          >
-            {topLeftItems.map((item) => (
-              <MenuItem key={item.id} item={item} reducedMotion={reducedMotion} />
-            ))}
-          </nav>
-        )}
+        {isNavbarItemArray(topLeftItems)
+          ? topLeftItems.length > 0 && (
+              <nav
+                aria-label="Navegación principal"
+                style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 4 }}
+              >
+                {topLeftItems.map((item) => (
+                  <MenuItem key={item.id} item={item} reducedMotion={reducedMotion} />
+                ))}
+              </nav>
+            )
+          : topLeftItems}
         {search && (
           // biome-ignore lint/a11y/useSemanticElements: <search> is a valid alternative, but React's DOM tag whitelist doesn't recognize it yet and logs a false "unrecognized tag" warning in React 18/19, which this library's consumers would see
           <form
@@ -342,6 +388,10 @@ export const Navbar = ({
             borderRight: '1px solid var(--bragi-border, #d1d5db)',
             background: 'var(--bragi-sidebar-background, #f3f4f6)',
             boxSizing: 'border-box',
+            position: sticky ? 'sticky' : undefined,
+            top: sticky ? 'var(--bragi-navbar-height, 64px)' : undefined,
+            height: sticky ? 'calc(100dvh - var(--bragi-navbar-height, 64px))' : undefined,
+            overflowY: sticky ? 'auto' : undefined,
             transition: reducedMotion ? 'none' : 'width var(--bragi-motion-duration, 220ms) ease',
           }}
         >
@@ -349,32 +399,20 @@ export const Navbar = ({
             {sidebarSections.map((section, index) => (
               <section
                 key={section.id}
-                aria-label={section.label}
+                aria-label={section.label || undefined}
                 style={{
                   borderTop: index ? '1px solid var(--bragi-border, #d1d5db)' : undefined,
                   paddingTop: index ? 12 : 0,
                   marginTop: index ? 12 : 0,
                 }}
               >
-                {/* biome-ignore lint/a11y/useHeadingContent: aria-hidden only applies while collapsed to icon-only mode; the label text is present and exposed otherwise */}
-                <h2
-                  aria-hidden={isCollapsed || undefined}
-                  style={{
-                    margin: isCollapsed ? '0 12px' : '8px 12px',
-                    maxHeight: isCollapsed ? 0 : 24,
-                    opacity: isCollapsed ? 0 : 1,
-                    overflow: 'hidden',
-                    color: 'var(--bragi-muted, #6b7280)',
-                    fontSize: 'var(--bragi-sidebar-heading-size, 12px)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    transition: reducedMotion
-                      ? 'none'
-                      : 'max-height var(--bragi-motion-duration, 220ms) ease, opacity var(--bragi-motion-fast, 160ms) ease, margin var(--bragi-motion-duration, 220ms) ease',
-                  }}
-                >
-                  {section.label}
-                </h2>
+                {section.label && (
+                  <SidebarSectionHeading
+                    label={section.label}
+                    isCollapsed={isCollapsed}
+                    reducedMotion={reducedMotion}
+                  />
+                )}
                 <div style={{ display: 'grid', gap: 4 }}>
                   {section.items.map((item) => (
                     <MenuItem

@@ -75,6 +75,51 @@ describe('Navbar', () => {
     expect(sidebar.parentElement).toHaveStyle({ flex: '1 1 auto' });
   });
 
+  it('renders a ReactNode passed as topLeftItems instead of a NavbarItem list', () => {
+    render(
+      <Navbar
+        brand="BragiUI"
+        topLeftItems={
+          <nav aria-label="Breadcrumb">
+            <span>Inicio / Detalle</span>
+          </nav>
+        }
+      />,
+    );
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
+    expect(screen.getByText('Inicio / Detalle')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('navigation', { name: 'Navegación principal' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('makes the navbar and sidebar sticky when sticky is set', () => {
+    render(<Navbar brand="BragiUI" sticky />);
+    const header = screen.getByRole('banner');
+    const sidebar = screen.getByRole('complementary', { name: 'Menú lateral' });
+
+    expect(header.style.position).toBe('sticky');
+    expect(header.style.top).toBe('0px');
+    // jsdom's CSSOM rejects `top: var(...)` as an invalid length and silently drops it
+    // (real browsers accept it), so position/overflow are what this environment can assert.
+    expect(sidebar.style.position).toBe('sticky');
+    expect(sidebar.style.overflowY).toBe('auto');
+  });
+
+  it('does not render a sidebar section heading when its label is empty', () => {
+    render(
+      <Navbar
+        brand="BragiUI"
+        sidebarSections={[
+          { id: 'unlabeled', label: '', items: [{ id: 'home', label: 'Inicio', icon: '⌂' }] },
+          ...sections,
+        ]}
+      />,
+    );
+    expect(screen.queryByRole('heading', { name: '' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Principal' })).toBeInTheDocument();
+  });
+
   it('disables transitions when reduced motion is requested', () => {
     const descriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
     Object.defineProperty(window, 'matchMedia', {
