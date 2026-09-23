@@ -128,14 +128,14 @@ const MenuItem = ({
       ? 'var(--bragi-nav-active-foreground, #1d4ed8)'
       : 'var(--bragi-foreground, #111827)',
     background: integrated
-      ? 'var(--bragi-workspace-background, #fff)'
+      ? 'var(--bragi-workspace-background, transparent)'
       : item.active
         ? 'var(--bragi-nav-active-background, #eff6ff)'
         : 'transparent',
     marginRight: integrated ? -9 : undefined,
     position: integrated ? 'relative' : undefined,
     zIndex: integrated ? 1 : undefined,
-    boxShadow: integrated ? '1px 0 0 var(--bragi-workspace-background, #fff)' : undefined,
+    boxShadow: integrated ? '1px 0 0 var(--bragi-workspace-background, transparent)' : undefined,
     textDecoration: 'none',
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
@@ -432,7 +432,7 @@ export const Navbar = ({
           style={{
             flex: '1 1 0',
             minWidth: 0,
-            background: 'var(--bragi-workspace-background, #fff)',
+            background: 'var(--bragi-workspace-background, transparent)',
           }}
         >
           {children}

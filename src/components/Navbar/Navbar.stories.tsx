@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { Navbar, type NavbarProps } from './Navbar';
 
@@ -80,6 +81,21 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Collapsed: Story = { args: { defaultCollapsed: true } };
+
+const greenWorkspaceStyle = {
+  '--bragi-workspace-background': 'green',
+} as CSSProperties;
+
+export const OnGreenBackground: Story = {
+  args: {
+    style: greenWorkspaceStyle,
+  },
+  render: (args) => (
+    <div style={{ background: 'green', minHeight: '100dvh' }}>
+      <InteractiveNavbar {...args} />
+    </div>
+  ),
+};
 
 export const WithBreadcrumbAndSticky: Story = {
   args: {
