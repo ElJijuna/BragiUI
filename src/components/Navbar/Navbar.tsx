@@ -396,6 +396,7 @@ export const Navbar = ({
             top: sticky ? 'var(--bragi-navbar-height, 64px)' : undefined,
             height: sticky ? 'calc(100dvh - var(--bragi-navbar-height, 64px))' : undefined,
             overflowY: sticky ? 'auto' : undefined,
+            overflowX: sticky ? 'hidden' : undefined,
             transition: reducedMotion ? 'none' : 'width var(--bragi-motion-duration, 220ms) ease',
           }}
         >
