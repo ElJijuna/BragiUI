@@ -104,6 +104,8 @@ describe('Navbar', () => {
     // (real browsers accept it), so position/overflow are what this environment can assert.
     expect(sidebar.style.position).toBe('sticky');
     expect(sidebar.style.overflowY).toBe('auto');
+    expect(sidebar.style.overflowX).toBe('hidden');
+    
   });
 
   it('renders a custom ReactNode at the bottom of the sidebar', () => {
